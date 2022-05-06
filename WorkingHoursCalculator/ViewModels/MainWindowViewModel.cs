@@ -1,4 +1,7 @@
 ﻿using Prism.Mvvm;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace WorkingHoursCalculator.ViewModels
 {
@@ -13,6 +16,7 @@ namespace WorkingHoursCalculator.ViewModels
 
         public MainWindowViewModel()
         {
+
 
         }
     }
