@@ -131,7 +131,7 @@ namespace WorkingHoursCalculator.ViewModels
             if (_rest) ResultHour -= 1;
 
             if (ResultHour < 0) ResultHour += 24;
-            if (ResultMinute < 0) ResultMinute += 60;
+            if (ResultMinute < 0) ResultMinute += 24;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
