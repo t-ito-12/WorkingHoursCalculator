@@ -18,7 +18,7 @@
 			</MenuItem>	
 		</Menu>
 
-        <v:WorkingHoursCalculatorWindow Visibility="Visible" x:Name="WorkingHoursCalculatorTab"/>
+        <v:WorkingHoursCalculatorWindow x:Name="WorkingHoursCalculatorTab"/>
 
 	</DockPanel>
           
