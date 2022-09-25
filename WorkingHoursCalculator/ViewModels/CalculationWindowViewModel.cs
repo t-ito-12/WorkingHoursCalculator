@@ -1,6 +1,5 @@
 ﻿using Prism.Commands;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -13,119 +12,54 @@ namespace WorkingHoursCalculator.ViewModels
     class CalculationWindowViewModel : INotifyPropertyChanged
     {
         /// <summary>
-        /// 時間
-        /// </summary>
-        public Dictionary<int, string> Hour { get; } = new Dictionary<int, string>();
-
-        /// <summary>
-        /// 分
-        /// </summary>
-        public Dictionary<int, string> Minute { get; } = new Dictionary<int, string>();
-
-        /// <summary>
-        /// 休憩の有無
-        /// </summary>
-        public Dictionary<bool, string> Rest { get; } = new Dictionary<bool, string>();
-
-        /// <summary>
         /// 勤務開始時間(時)
         /// </summary>
         public int StartHour
         {
-            get
-            {
-                return m_startHour;
-            }
-            set
-            {
-                if (m_startHour != value)
-                {
-                    m_startHour = value;
-                    RaisePropertyChanged("StartHour");
-                }
-            }
+            get { return m_startHour; }
+            private set { m_startHour = value; }
         }
-        private int m_startHour;
-
+        private int m_startHour = 0;
+        
         /// <summary>
         /// 勤務開始時間(分)
         /// </summary>
         public int StartMinute
         {
-            get
-            {
-                return m_startMinute;
-            }
-            set
-            {
-                if (m_startMinute != value)
-                {
-                    m_startMinute = value;
-                    RaisePropertyChanged("StartMinute");
-                }
-            }
+            get { return m_startMinute; }
+            private set { m_startMinute = value; }
         }
-        private int m_startMinute;
+        private int m_startMinute = 0;
 
         /// <summary>
         /// 勤務終了時間(時)
         /// </summary>
         public int EndHour
         {
-            get
-            {
-                return m_endHour;
-            }
-            set
-            {
-                if (m_endHour != value)
-                {
-                    m_endHour = value;
-                    RaisePropertyChanged("EndHour");
-                }
-            }
+            get { return m_endHour; }
+            private set { m_endHour = value; }
         }
-        private int m_endHour;
+        private int m_endHour = 0;
 
         /// <summary>
         /// 勤務終了時間(分)
         /// </summary>
         public int EndMinute
         {
-            get
-            {
-                return m_endMinute;
-            }
-            set
-            {
-                if (m_endMinute != value)
-                {
-                    m_endMinute = value;
-                    RaisePropertyChanged("EndMinute");
-                }
-            }
+            get { return m_endMinute; }
+            private set { m_endMinute = value; }
         }
-        private int m_endMinute;
+        private int m_endMinute = 0;
 
         /// <summary>
         /// 休憩の有無
         /// </summary>
-        public bool IsRest
+        public bool Rest
         {
-            get
-            {
-                return m_isRest;
-            }
-            set
-            {
-                if (m_isRest != value)
-                {
-                    m_isRest = value;
-                    RaisePropertyChanged("IsRest");
-                }
-            }
+            get { return m_rest; }
+            private set { m_rest = value; }
         }
-        private bool m_isRest;
+        private bool m_rest = true;
 
         /// <summary>
         /// 勤務時間(時)
@@ -135,11 +69,8 @@ namespace WorkingHoursCalculator.ViewModels
             get { return m_resultHour; }
             set
             {
-                if (m_resultHour != value)
-                {
-                    m_resultHour = value;
-                    RaisePropertyChanged("ResultHour");
-                }
+                m_resultHour = value;
+                RaisePropertyChanged("ResultHour");
             }
         }
         private int m_resultHour;
@@ -152,11 +83,8 @@ namespace WorkingHoursCalculator.ViewModels
             get { return m_resultMinute; }
             set
             {
-                if (m_resultMinute != value)
-                {
-                    m_resultMinute = value;
-                    RaisePropertyChanged("ResultMinute");
-                }
+                m_resultMinute = value;
+                RaisePropertyChanged("ResultMinute");
             }
         }
         private int m_resultMinute;
@@ -169,7 +97,7 @@ namespace WorkingHoursCalculator.ViewModels
             get { return m_selectedDay.ToString("D") + "(" + m_selectedDay.ToString("ddd") + ")";  }
             set 
             {
-                if (value is string && !string.IsNullOrEmpty(value))
+                if(value is string && !string.IsNullOrEmpty(value))
                 {
                     if(m_selectedDay != DateTime.Parse(value))
                     {
@@ -187,63 +115,42 @@ namespace WorkingHoursCalculator.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-        /// Viewを初期化するコマンド
+        /// Viewを初期化するイベントハンドラ
         /// </summary>
-        public ICommand InitializeCommand { get; }
+        public event EventHandler<EventArgs> InitializeView;
 
         /// <summary>
-        /// 設定時間が変更されたときに実行されるコマンド
+        /// Viewを初期化するコマンド
         /// </summary>
-        public ICommand SelectionChangedCommand { get; }
+        public ICommand InitializeCommand { get; private set; }
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public CalculationWindowViewModel()
         {
-            for (int i = 0; i < 24; i++)
-            {
-                Hour.Add(i, i.ToString());
-            }
-
-            for (int i = 0; i < 60; i++)
-            {
-                Minute.Add(i, i.ToString());
-            }
-
-            Rest.Add(true, "あり");
-            Rest.Add(false, "なし");
-
-            InitializeTimes();
-            CalculateWorkTime();
-
             InitializeCommand = new DelegateCommand(() =>
             {
-                InitializeTimes();
-            });
-
-            SelectionChangedCommand = new DelegateCommand(() =>
-            {
-                CalculateWorkTime();
+                if (InitializeView != null) InitializeView(this, EventArgs.Empty);
             });
         }
 
         /// <summary>
-        /// 設定時間を初期値に戻す
+        /// 現在選択中の日付を設定する
         /// </summary>
-        public void InitializeTimes()
+        /// <param name="_dateTime"></param>
+        public void SetSelectedDay(string _dateTime)
         {
-            StartHour = 0;
-            StartMinute = 0;
-            EndHour = 0;
-            EndMinute = 0;
-            IsRest = true;
+            if (!string.IsNullOrEmpty(_dateTime))
+            {
+                SelectedDay = _dateTime;
+            }
         }
 
         /// <summary>
         /// 現在選択中の日付に指定の日数を加えた日付を、現在選択中の日付に設定する
         /// </summary>
-        /// <param name="_addDays">追加する日数</param>
+        /// <param name="_addDays"></param>
         public void AddSelectedDay(int _addDays)
         {
             DateTime sd = m_selectedDay;
@@ -251,21 +158,40 @@ namespace WorkingHoursCalculator.ViewModels
         }
 
         /// <summary>
+        /// 勤務時間と勤務開始・終了時間を設定する
+        /// </summary>
+        /// <param name="_startHour"></param>
+        /// <param name="_startMinute"></param>
+        /// <param name="_endHour"></param>
+        /// <param name="_endMinute"></param>
+        /// <param name="_rest"></param>
+        public void SetTime(int _startHour, int _startMinute, int _endHour, int _endMinute, bool _rest)
+        {
+            StartHour = _startHour; StartMinute = _startMinute; EndHour = _endHour; EndMinute = _endMinute; Rest = _rest;
+            Calculate(StartHour, StartMinute, EndHour, EndMinute, Rest);
+        }
+
+        /// <summary>
         /// 勤務時間を計算する
         /// </summary>
-        private void CalculateWorkTime()
+        /// <param name="_startHour"></param>
+        /// <param name="_startMinute"></param>
+        /// <param name="_endHour"></param>
+        /// <param name="_endMinute"></param>
+        /// <param name="_rest"></param>
+        private void Calculate(int _startHour, int _startMinute, int _endHour, int _endMinute, bool _rest)
         {
-            TimeSpan startTime = TimeSpan.Parse(StartHour + ":" + StartMinute);
-            TimeSpan endTime = TimeSpan.Parse(EndHour + ":" + EndMinute);
+            TimeSpan startTime = TimeSpan.Parse(_startHour + ":" + _startMinute);
+            TimeSpan endTime = TimeSpan.Parse(_endHour + ":" + _endMinute);
 
             TimeSpan Time = endTime - startTime;
             ResultHour = Time.Hours;
             ResultMinute = Time.Minutes;
 
-            if (IsRest) ResultHour -= 1;
+            if (_rest) ResultHour -= 1;
 
             if (ResultHour < 0) ResultHour += 24;
-            if (ResultMinute < 0) ResultMinute += 24;
+            if (ResultMinute < 0) ResultMinute += 60;
         }
 
         /// <summary>
