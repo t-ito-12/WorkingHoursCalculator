@@ -1,18 +1,28 @@
 ﻿using Prism.Mvvm;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace WorkingHoursCalculator.ViewModels
 {
+    /// <summary>
+    /// MainWindowのViewModel
+    /// </summary>
     public class MainWindowViewModel : BindableBase
     {
-        private string m_title = "勤務時間計算機";
+        /// <summary>
+        /// タイトル
+        /// </summary>
         public string Title
         {
             get { return m_title; }
+            private set
+            {
+                if (!string.IsNullOrEmpty(value)) m_title = value;
+            }
         }
+        private string m_title = "勤務時間計算機";
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public MainWindowViewModel()
         {
 
