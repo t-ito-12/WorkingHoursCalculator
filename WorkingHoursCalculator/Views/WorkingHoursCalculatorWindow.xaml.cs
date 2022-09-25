@@ -1,15 +1,22 @@
-﻿using Prism.Commands;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace WorkingHoursCalculator.Views
 {
+    /// <summary>
+    /// WorkingHoursCalculatorWindow.xamlの相互作用ロジック
+    /// </summary>
     public partial class WorkingHoursCalculatorWindow : UserControl
     {
+        /// <summary>
+        /// このViewのViewModel
+        /// </summary>
         private ViewModels.CalculationWindowViewModel viewModel = new ViewModels.CalculationWindowViewModel();
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public WorkingHoursCalculatorWindow()
         {
             InitializeComponent();
@@ -22,6 +29,10 @@ namespace WorkingHoursCalculator.Views
             };
         }
 
+        /// <summary>
+        /// Viewの初期化
+        /// 勤務時間と勤務開始・終了時間および休憩の有無を初期値に設定する
+        /// </summary>
         public void InitializeTime()
         {
             if (StartHour != null && StartMinute != null && EndHour != null && EndMinute != null && Rest != null)
@@ -44,6 +55,11 @@ namespace WorkingHoursCalculator.Views
             }
         }
 
+        /// <summary>
+        /// コントロールの状態が変更されたときに呼ばれる
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (StartHour != null && StartMinute != null && EndHour != null && EndMinute != null && Rest != null)
@@ -68,15 +84,31 @@ namespace WorkingHoursCalculator.Views
             }
         }
 
+        /// <summary>
+        /// 削除ボタンが押下されたときに呼ばれる
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DeleteButtonClick(object sender, RoutedEventArgs e)
         {
             InitializeTime();
         }
 
+        /// <summary>
+        /// 左ボタン「＜」が押下されたときに呼ばれる
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void LeftButtonClick(object sender, RoutedEventArgs e)
         {
             viewModel.AddSelectedDay(-1);
         }
+
+        /// <summary>
+        /// 右ボタン「＞」が押下されたときに呼ばれる
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RightButtonClick(object sender, RoutedEventArgs e)
         {
             viewModel.AddSelectedDay(1);
